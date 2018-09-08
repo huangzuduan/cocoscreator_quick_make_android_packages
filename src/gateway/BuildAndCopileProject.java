@@ -1,0 +1,47 @@
+package gateway;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import config.Config;
+
+public class BuildAndCopileProject extends TimerTask {
+	
+	@Override
+	public void run() {
+		
+		ServerStart.process++;
+		
+		System.out.println("========开始构造编译===========");
+		// 检查配置是否正确,比如打113包，正式包，debug
+		String cmd = Config.getString("cocos_exe") + " --path "+ Config.getString("cocos_project") + " --build \""+ Config.getString("cocos_build") +"\"";
+        String s = "";
+        try {
+           Process p = Runtime.getRuntime().exec(cmd);
+           BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+           for(String line = null; (line = in.readLine()) != null; s = s + line + "\n") {
+              ;
+           }
+        } catch (IOException e) {
+           e.printStackTrace();
+        }
+        
+        System.out.println("cmd:========\n" + s);
+        
+        System.out.println("========构造编译完成===========");
+        
+        ServerStart.process++;
+        
+        if(!Config.getBoolean("cocos_autopackchannels")) return;
+        
+   	 	System.out.println("========开始生成渠道包===========");
+   	 	
+   	 	new Timer().schedule(new DecompressionApk(),1000);
+		
+	}
+}
+
+

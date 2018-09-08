@@ -1,0 +1,15 @@
+<configuration>
+    <!-- AndroidManifest配置修改,匹配修改 -->
+	<option name="version" value="1.0.8"/>
+	<option name="app_id" value="1041"/>
+	<option name="appchi_id" value="10139"/>
+	<option name="channelchi_ids" value="10002101,10002114,10002118"/>
+	<option name="login_env" value="test_113"/>
+	
+	<!-- 构建编译参数 -->
+	<option name="cocos_exe" value="D:\CocosCreator\CocosCreator.exe"/>
+	<option name="cocos_project" value="E:\bfkj\client\trunk"/>
+	<option name="cocos_build" value="platform=android;debug=true;autoCompile=true"/>
+	<option name="cocos_autopackchannels" value="true"/>
+	
+</configuration>

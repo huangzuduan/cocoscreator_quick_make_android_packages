@@ -1,0 +1,5 @@
+﻿1、系统的环境变量增加Java/JDK/bin
+2、需要事先配置好cocos creator 并且能正常出apk包
+3、本代码目前是根据我自己的情况去修改AndroidMenifest.xml中的参数处理，使用者要根据自己的情况进行对代码及config.xml文件作相应的修改
+4、将代码拷贝到cocos creator默认生成apk文件的目录下
+5、双击->ServerRun<-启动服务器，将会自动打包所有渠道包，应用到了多线程任务进行，所以打包的速度还是非常快的
