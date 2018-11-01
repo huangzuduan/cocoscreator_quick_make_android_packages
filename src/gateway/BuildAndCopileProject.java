@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import config.Config;
+import config.FileSystem;
 
 public class BuildAndCopileProject extends TimerTask {
 	
@@ -14,6 +15,8 @@ public class BuildAndCopileProject extends TimerTask {
 	public void run() {
 		
 		ServerStart.process++;
+		
+		if(!checkProjectDir()) return;
 		
 		System.out.println("========开始构造编译===========");
 		// 检查配置是否正确,比如打113包，正式包，debug
@@ -41,6 +44,33 @@ public class BuildAndCopileProject extends TimerTask {
    	 	
    	 	new Timer().schedule(new DecompressionApk(),1000);
 		
+	}
+	
+	public boolean checkProjectDir()
+	{
+		String[] projectFiles = FileSystem.ls(Config.getString("cocos_project"));
+		String[] foundFiles = {"assets","build","settings","project.json"};
+		if(projectFiles.length >= foundFiles.length)
+		{
+			for(int j = 0; j < foundFiles.length; ++j)
+			{
+				boolean isFoundIt = false;
+				for(int i = 0; i < projectFiles.length; ++i)
+				{
+					if(foundFiles[j].equalsIgnoreCase(projectFiles[i]))
+					{
+						isFoundIt = true;
+						break;
+					}
+				}
+				if(isFoundIt == false)
+				{
+					System.out.println("========项目路径未找到，请在" + ServerStart.ConfigFile + "文件中设置好cocos_project===========");
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }
 

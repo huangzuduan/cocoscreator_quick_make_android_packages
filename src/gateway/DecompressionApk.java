@@ -19,7 +19,7 @@ public class DecompressionApk extends TimerTask {
       String[] files = FileSystem.ls(ServerStart.serverDir);
       for(int i = 0; i < files.length; ++i) {  
          String apkFile = files[i];
-         if(apkFile.endsWith("-debug.apk") || apkFile.endsWith("-release.apk")) {
+         if(apkFile.endsWith("-debug.apk") || apkFile.endsWith("-release-signed.apk")) {
         	 
         	ServerStart.process++;
         	 

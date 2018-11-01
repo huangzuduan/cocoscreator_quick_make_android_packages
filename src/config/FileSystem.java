@@ -67,7 +67,7 @@ public final class FileSystem {
       }
    }
 
-   public static int delete(String filename) {
+	public static int delete(String filename) {
       File file = new File(filename);
       if(file.isDirectory()) {
          String[] dir = ls(filename);

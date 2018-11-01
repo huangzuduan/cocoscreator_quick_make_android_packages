@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import config.Config;
 import config.FileSystem;
 
 public class MakeUnsignedApk  extends TimerTask {
@@ -31,44 +32,53 @@ public class MakeUnsignedApk  extends TimerTask {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub	
-		
-		ServerStart.process++;
-	
-        String subFileName = this.srcApkFile.substring(0, this.srcApkFile.lastIndexOf("."));
-        String newXmlFileName = this.serverDir +"/"+ this.workTmpPath +  "/" + ServerStart.AllChannels + "/" + channelchiId + "/AndroidManifest.xml";
-        String dstXmlFileName = this.serverDir + "/" + this.srcApkFile.substring(0, this.srcApkFile.lastIndexOf(".")) + "/AndroidManifest.xml";
-        FileSystem.write(dstXmlFileName, FileSystem.read(newXmlFileName), false);
-        String outFileName = packname.substring(packname.lastIndexOf(".") + 1, packname.length());
-        outFileName = outFileName.substring(0, 3);
-        if(subFileName.indexOf("debug") > -1) {
-           outFileName = outFileName + "_d_";
-        } else {
-           outFileName = outFileName + "_r_";
-        }
+		synchronized(this) {
+			ServerStart.process++;
+			
+	        String subFileName = this.srcApkFile.substring(0, this.srcApkFile.lastIndexOf("."));
+	        String newXmlFileName = this.serverDir +"/"+ this.workTmpPath +  "/" + ServerStart.AllChannels + "/" + channelchiId + "/AndroidManifest.xml";
+	        String dstXmlFileName = this.serverDir + "/" + this.srcApkFile.substring(0, this.srcApkFile.lastIndexOf(".")) + "/AndroidManifest.xml";
+	        FileSystem.write(dstXmlFileName, FileSystem.read(newXmlFileName), false);
+	        String outFileName = packname.substring(packname.lastIndexOf(".") + 1, packname.length());
+	        outFileName = outFileName.substring(0, 3);
+	        if(subFileName.indexOf("debug") > -1) {
+	           outFileName = outFileName + "_d_";
+	        } else {
+	           outFileName = outFileName + "_r_";
+	        }
+	        
+	        String login_env = Config.getString("login_env");
+	        if(login_env.equalsIgnoreCase("test_113"))
+	        {
+	        	  outFileName = "测试服113_" + outFileName + channelchiId + "_" + mainVersion + "_" + this.fileDateTime + ".apk";
+	        }
+	        else
+	        {
+	        	 outFileName = outFileName + channelchiId + "_" + mainVersion + "_" + this.fileDateTime + ".apk";
+	        }
+	      
+	        String cmd = this.serverDir + "/apktool.bat b " + this.serverDir + "/" + this.srcApkFile.substring(0, this.srcApkFile.lastIndexOf(".")) + " -o " + this.serverDir + "/"+ this.workTmpPath + "/" + ServerStart.UnSignePackages + "/" + outFileName;
+	        String s = "";
+	        try {
+	           Process e = Runtime.getRuntime().exec(cmd);
+	           BufferedReader in = new BufferedReader(new InputStreamReader(e.getInputStream()));
+	           for(String line = null; (line = in.readLine()) != null; s = s + line + "\n") {
+	              ;
+	           }
+	        } catch (IOException e) {
+	           e.printStackTrace();
+	        }
 
-        outFileName = outFileName + channelchiId + "_" + mainVersion + "_" + this.fileDateTime + ".apk";
-        String cmd = this.serverDir + "/apktool.bat b " + this.serverDir + "/" + this.srcApkFile.substring(0, this.srcApkFile.lastIndexOf(".")) + " -o " + this.serverDir + "/"+ this.workTmpPath + "/" + ServerStart.UnSignePackages + "/" + outFileName;
-        String s = "";
-        try {
-           Process e = Runtime.getRuntime().exec(cmd);
-           BufferedReader in = new BufferedReader(new InputStreamReader(e.getInputStream()));
-           for(String line = null; (line = in.readLine()) != null; s = s + line + "\n") {
-              ;
-           }
-        } catch (IOException e) {
-           e.printStackTrace();
-        }
-
-        System.out.println("cmd:========\n" + s);
-        
-        FileSystem.write(this.serverDir + "/" + this.workTmpPath + "/" + ServerStart.SignePackages + "/log.txt", s, true);
-        
-        System.out.println("===打未签包:" + outFileName + "..............ok!");
-        
-        ServerStart.process++;
-        
-        (new Timer()).schedule(new MakeSingedApk(this.srcApkFile, this.workTmpPath, outFileName), 10L);
-		
+	        System.out.println("cmd:========\n" + s);
+	        
+	        FileSystem.write(this.serverDir + "/" + this.workTmpPath + "/" + ServerStart.SignePackages + "/log.txt", s, true);
+	        
+	        System.out.println("===打未签包:" + outFileName + "..............ok!\n");
+	        
+	        ServerStart.process++;
+	        
+	        (new Timer()).schedule(new MakeSingedApk(this.srcApkFile, this.workTmpPath, outFileName), 10L);
+		}
 	}
 
 }

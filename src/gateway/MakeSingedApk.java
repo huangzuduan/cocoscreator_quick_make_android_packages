@@ -3,6 +3,7 @@ package gateway;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Timer;
 import java.util.TimerTask;
 
 import config.FileSystem;
@@ -43,16 +44,18 @@ public class MakeSingedApk extends TimerTask {
       
       FileSystem.write(ServerStart.serverDir + "/" + this.workTmpPath + "/" + ServerStart.SignePackages + "/log.txt", s, true);
 
-      System.out.println("===打签包:" + this.outFileName + "..............ok!");
+      System.out.println("===打签包:" + this.outFileName + "..............ok!\n");
       
       ++ServerStart.pack_cur_counts;
       if(ServerStart.pack_cur_counts == ServerStart.pack_all_counts) {
-         System.out.println("===所有打包任务已经完成..............ok!");
+         System.out.println("===所有打包任务已经完成..............ok!\n");
          FileSystem.delete(ServerStart.serverDir + "/" + this.srcApkFile.substring(0, this.srcApkFile.lastIndexOf(".")));
          FileSystem.delete(ServerStart.serverDir + "/" + this.workTmpPath + "/" + ServerStart.AllChannels);
          FileSystem.delete(ServerStart.serverDir + "/" + this.workTmpPath + "/" + ServerStart.UnSignePackages);
-         
          ServerStart.process = 100;
+      }else{
+          ServerStart.pack_cur_channel++;     
+          (new Timer()).schedule(new MakeUnsignedApk(ServerStart.serverDir, this.srcApkFile, this.workTmpPath,  ServerStart.channelChiIds[ServerStart.pack_cur_channel], ServerStart.packname, ServerStart.mainVersion,ServerStart.fileDateTime), 10L);   
       }
       
    }

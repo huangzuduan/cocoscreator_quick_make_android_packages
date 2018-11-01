@@ -10,16 +10,10 @@ public class ProcessShow  extends TimerTask {
 
 	@Override
 	public void run() {
-//		if(lastProcess > 0 && lastProcess == ServerStart.process)
-//		{
-//			return ;
-//		}
-		
 		if(lastProcess >= 100)
 		{
 			return;
 		}
-		
 		lastProcess = ServerStart.process;
 		String process = "=>";
 		for(int i = 0; i < ServerStart.process; ++i)
@@ -29,5 +23,4 @@ public class ProcessShow  extends TimerTask {
 		process += ServerStart.process + "%";
 		System.out.println(DateTime.date("yyyy/MM/dd HH:mm:ss") + "  " + process);
 	}
-
 }
